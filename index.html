@@ -8,7 +8,7 @@
 </head>
 <body>
 <div class="container">
-  <h1>🇦🇿 AZ Car Finders</h1>
+  <h1>🇦🇿 AZ Car Finder</h1>
   <input id="plateInput" placeholder="99-AA-999" maxlength="10">
   <button onclick="findCar()">Axtar</button>
 
@@ -20,11 +20,11 @@
   <p>Yeni maşın əlavə etmək üçün <a href="upload.html">buraya kliklə</a></p>
 </div>
 
-<!-- Firebase + App JS -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+<!-- Firebase compat SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
+<script>
   const firebaseConfig = {
     apiKey: "AIzaSyA6_KRvzWOnugniooEVU2mYwyS4dQVEigg",
     authDomain: "az-car-finder.firebaseapp.com",
@@ -32,22 +32,23 @@
     appId: "1:57523334386:web:92894db01eb5eb64f0b46b"
   };
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
 
   async function findCar() {
     const plate = document.getElementById("plateInput").value.toUpperCase();
     if (!plate) return;
 
-    const carDoc = await getDoc(doc(db, "cars", plate));
-    if (carDoc.exists()) {
+    const carDoc = await db.collection("cars").doc(plate).get();
+    if (carDoc.exists) {
       const car = carDoc.data();
       document.getElementById("carImage").src = car.image || "";
       document.getElementById("resultText").innerText =
         `${car.brand} ${car.model} (${car.color})`;
     } else {
       document.getElementById("carImage").src = "";
-      document.getElementById("resultText").innerText = "Bu maşın hələ əlavə edilməyib.";
+      document.getElementById("resultText").innerText =
+        "Bu maşın hələ əlavə edilməyib.";
     }
   }
 </script>
