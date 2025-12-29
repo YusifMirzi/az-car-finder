@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AZ Car Gallery</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+  <h1>🚗 Bütün əlavə edilmiş maşınlar</h1>
+
+  <div id="gallery" class="gallery-grid"></div>
+
+  <p><a href="index.html">Axtarış səhifəsinə qayıt</a> | <a href="upload.html">Yeni maşın əlavə et</a></p>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyA6_KRvzWOnugniooEVU2mYwyS4dQVEigg",
+    authDomain: "az-car-finder.firebaseapp.com",
+    projectId: "az-car-finder",
+    appId: "1:57523334386:web:92894db01eb5eb64f0b46b"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  const galleryDiv = document.getElementById("gallery");
+
+  db.collection("cars").get().then(snapshot => {
+    snapshot.forEach(doc => {
+      const { brand, model, color, image } = doc.data();
+      const plate = doc.id;
+
+      const card = document.createElement("div");
+      card.className = "car-card";
+      card.innerHTML = `
+        <img src="${image}" alt="${brand} ${model}">
+        <h2>${brand} ${model}</h2>
+        <p>Rəng: ${color}</p>
+        <p>Plaka: ${plate}</p>
+      `;
+      galleryDiv.appendChild(card);
+    });
+  });
+</script>
+
+</body>
+</html>

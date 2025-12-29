@@ -7,20 +7,17 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
 <div class="container">
   <h1>🇦🇿 AZ Car Finder</h1>
   <input id="plateInput" placeholder="99-AA-999" maxlength="10">
   <button onclick="findCar()">Axtar</button>
 
-  <div class="result-box">
-    <img id="carImage">
-    <p id="resultText"></p>
-  </div>
+  <div id="carCard"></div>
 
-  <p>Yeni maşın əlavə etmək üçün <a href="upload.html">buraya kliklə</a></p>
+  <p><a href="upload.html">Yeni maşın əlavə et</a> | <a href="gallery.html">Bütün maşınları gör</a></p>
 </div>
 
-<!-- Firebase compat SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
@@ -40,17 +37,24 @@
     if (!plate) return;
 
     const carDoc = await db.collection("cars").doc(plate).get();
+    const cardDiv = document.getElementById("carCard");
+    cardDiv.innerHTML = "";
+
     if (carDoc.exists) {
-      const car = carDoc.data();
-      document.getElementById("carImage").src = car.image || "";
-      document.getElementById("resultText").innerText =
-        `${car.brand} ${car.model} (${car.color})`;
+      const { brand, model, color, image } = carDoc.data();
+      cardDiv.innerHTML = `
+        <div class="car-card">
+          <img src="${image}" alt="${brand} ${model}">
+          <h2>${brand} ${model}</h2>
+          <p>Rəng: ${color}</p>
+          <p>Plaka: ${plate}</p>
+        </div>
+      `;
     } else {
-      document.getElementById("carImage").src = "";
-      document.getElementById("resultText").innerText =
-        "Bu maşın hələ əlavə edilməyib.";
+      cardDiv.innerHTML = "<p>Bu maşın hələ əlavə edilməyib.</p>";
     }
   }
 </script>
+
 </body>
 </html>

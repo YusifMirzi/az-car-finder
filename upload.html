@@ -1,26 +1,25 @@
 <!DOCTYPE html>
 <html lang="az">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Maşın əlavə et</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css"/>
 </head>
 <body>
+
 <div class="container">
   <h1>🚗 Maşın əlavə et</h1>
-  <input id="plateUpload" placeholder="99-AA-999">
-  <input id="brandUpload" placeholder="Marka">
-  <input id="modelUpload" placeholder="Model">
-  <input id="colorUpload" placeholder="Rəng">
-  <input id="imageUpload" placeholder="Şəkil URL" type="url">
+  <input id="plateUpload" placeholder="99-AA-999"/>
+  <input id="brandUpload" placeholder="Marka"/>
+  <input id="modelUpload" placeholder="Model"/>
+  <input id="colorUpload" placeholder="Rəng"/>
+  <input id="imageFile" type="file" accept="image/*"/>
   <button onclick="uploadCar()">Əlavə et</button>
   <p id="uploadStatus"></p>
-
-  <p><a href="index.html">Axtarış səhifəsinə qayıt</a></p>
+  <p><a href="index.html">Axtarış səhifəsinə qayıt</a> | <a href="gallery.html">Bütün maşınları gör</a></p>
 </div>
 
-<!-- Firebase compat SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
@@ -40,16 +39,45 @@
     const brand = document.getElementById("brandUpload").value;
     const model = document.getElementById("modelUpload").value;
     const color = document.getElementById("colorUpload").value;
-    const image = document.getElementById("imageUpload").value;
+    const fileInput = document.getElementById("imageFile");
+    const file = fileInput.files[0];
 
-    if (!plate || !brand || !model || !color || !image) {
+    if (!plate || !brand || !model || !color || !file) {
       document.getElementById("uploadStatus").innerText = "Bütün sahələri doldurun!";
       return;
     }
 
-    await db.collection("cars").doc(plate).set({ brand, model, color, image });
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "azcarfinder"); // your preset
+    const cloudName = "dk0e3f7vc"; // your Cloud Name
+    const uploadUrl = `https://api.cloudinary.com/v1_1/${cloudName}/upload`;
+
+    document.getElementById("uploadStatus").innerText = "Şəkil yüklənir...";
+
+    const response = await fetch(uploadUrl, {
+      method: "POST",
+      body: formData
+    });
+
+    const data = await response.json();
+    const imageUrl = data.secure_url;
+
+    if (!imageUrl) {
+      document.getElementById("uploadStatus").innerText = "Şəkil yüklənmədi, yenidən cəhd edin.";
+      return;
+    }
+
+    await db.collection("cars").doc(plate).set({
+      brand,
+      model,
+      color,
+      image: imageUrl
+    });
+
     document.getElementById("uploadStatus").innerText = "Maşın əlavə olundu!";
   }
 </script>
+
 </body>
 </html>
