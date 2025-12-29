@@ -1,0 +1,44 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #111;
+  color: white;
+  text-align: center;
+  padding: 20px;
+}
+
+.container {
+  max-width: 400px;
+  margin: auto;
+  background: #222;
+  padding: 20px;
+  border-radius: 12px;
+}
+
+input, button {
+  width: 90%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 6px;
+  border: none;
+}
+
+button {
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.result-box img {
+  width: 100%;
+  max-height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+a {
+  color: #1E90FF;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}

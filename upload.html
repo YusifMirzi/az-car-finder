@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maşın əlavə et</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+  <h1>🚗 Maşın əlavə et</h1>
+  <input id="plateUpload" placeholder="99-AA-999">
+  <input id="brandUpload" placeholder="Marka">
+  <input id="modelUpload" placeholder="Model">
+  <input id="colorUpload" placeholder="Rəng">
+  <input id="imageUpload" placeholder="Şəkil URL" type="url">
+  <button onclick="uploadCar()">Əlavə et</button>
+  <p id="uploadStatus"></p>
+
+  <p><a href="index.html">Axtarış səhifəsinə qayıt</a></p>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+  import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyA6_KRvzWOnugniooEVU2mYwyS4dQVEigg",
+    authDomain: "az-car-finder.firebaseapp.com",
+    projectId: "az-car-finder",
+    appId: "1:57523334386:web:92894db01eb5eb64f0b46b"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  async function uploadCar() {
+    const plate = document.getElementById("plateUpload").value.toUpperCase();
+    const brand = document.getElementById("brandUpload").value;
+    const model = document.getElementById("modelUpload").value;
+    const color = document.getElementById("colorUpload").value;
+    const image = document.getElementById("imageUpload").value;
+
+    if (!plate || !brand || !model || !color || !image) {
+      document.getElementById("uploadStatus").innerText = "Bütün sahələri doldurun!";
+      return;
+    }
+
+    await setDoc(doc(db, "cars", plate), { brand, model, color, image });
+    document.getElementById("uploadStatus").innerText = "Maşın əlavə olundu!";
+  }
+</script>
+</body>
+</html>
